@@ -1,0 +1,259 @@
+// Bots lib
+// Supported games:
+// TM2, SM, TM2020
+
+#Include "MathLib" as ML
+
+declare Text[] FakePlayerNames;
+declare Integer BotNameNumber;
+declare Text BotName;
+declare Integer NumBots;
+
+Void SpawnFakePlayers(Integer _FakeUsersNb1, Integer _FakeUsersNb2) {
+    FakePlayerNames = [
+                        "Dominoes54",
+                        "MekhComeBack",
+                        "Cat..",
+                        "NiceShot.",
+                        "GotThisRun",
+                        "CQmPlayer",
+                        "Invida",
+                        "Gyaxon",
+                        "htomh",
+                        "oijono",
+                        "earbo",
+                        "Mr.Funny",
+                        "FunnyPools",
+                        "ItWasI...Dio",
+                        "FunnySpinBlock",
+                        "GoodLuckHefest",
+                        "SVVN",
+                        "ReadntMaster",
+                        "YourLastHope6",
+                        "Cryli..",
+                        "MinCheckers76",
+                        "mxmxmxmx",
+                        "no___",
+                        "Sunub",
+                        "MOVOROCK-V7",
+                        "FredoElDinguo",
+                        "MikeRoupachere85",
+                        "Lolforever",
+                        "SamLowry13",
+                        "JohnDifool",
+                        "AlphaStars",
+                        "[RR] Alex",
+                        "[RR] Ed",
+                        "Roanokay",
+                        "Pharos11",
+                        "Moonlighter",
+                        "CitarNosis",
+                        "Cothurnal",
+                        "ImpPlant10",
+                        "Pelfox",
+                        "KookSpook",
+                        "Picaresque78",
+                        "Robotik",
+                        "Fascro112",
+                        "JosuneEsGaizka",
+                        "[GZK] Pedro_Nieto",
+                        "DeliciaRodriGAZ",
+                        "josu153",
+                        "Enterrancia",
+                        "ByIbox",
+                        "Nieto_Ibon9",
+                        "GabrielThePulpo",
+                        "ManuMonzon",
+                        "[TY] C_SanGabriel12",
+                        "segundo6alas",
+                        "Bazkaria",
+                        "Binefar_Bl4ck",
+                        "Dvanjo",
+                        "ProstaSnoozy",
+                        "B3tsy",
+                        "Pakspa",
+                        "Kraady",
+                        "Kom_",
+                        "Rikenso",
+                        "Sulus",
+                        "Zies",
+                        "TeeKay",
+                        "Ezerka",
+                        "Kewi",
+                        "Narioka",
+                        "Tuddy",
+                        "WhiteLotus",
+                        "Kander",
+                        "Sync",
+                        "pauris",
+                        "yepssa",
+                        "rich_e",
+                        "kuustik",
+                        "Syber-Chot",
+                        "DragonsDontExist",
+                        "Syans",
+                        "Lorantez",
+                        "MrCopper",
+                        "PenguinLeader",
+                        "OldschoolDriver",
+                        "ImaginaryPilot",
+                        "FastNotFurious",
+                        "ElBulio",
+                        "x_sami_x",
+                        "Randalf0",
+                        "ramdstein",
+                        "Severin",
+                        "goudastic",
+                        "TheKev",
+                        "[M2] TrackMeisterr",
+                        "SETHgolden",
+                        "A08-is-valid",
+                        "NandOil",
+                        "AIM.set.off",
+                        "Supress_z",
+                        "PlanetsHarvester",
+                        "Waaer",
+                        "M.Rossi",
+                        "AeroSputnik",
+                        "BonkMaster",
+                        "LamaLeak",
+                        "PigeonFall",
+                        "LoveNEO",
+                        "GAMEDaBestTM",
+                        "icespark",
+                        "ionic_",
+                        "[SEAL] DarthSealius",
+                        "Neo.Jumper",
+                        "Tezla",
+                        "Lani",
+                        "Kadden",
+                        "Deezel",
+                        "Markye",
+                        "Mitch",
+                        "Taro",
+                        "Tork",
+                        "Nolo",
+                        "Karma",
+                        "Kurt",
+                        "Shirako",
+                        "Tone",
+                        "Vert",
+                        "CarlSenior",
+                        "A08Lover08",
+                        "TheBronzeMedalDriver",
+                        "NinthPlaceAndy",
+                        "FischmaulMarkus",
+                        "Mr.BluRay",
+                        "Glass_Pilot",
+                        "GrayMan",
+                        "InvalidReplay",
+                        "Trackmaster",
+                        "OneZero",
+                        "PaperMedal",
+                        "Sophia",
+                        "Atlas",
+                        "NoMind",
+                        "NandoMinion",
+                        "Random.Imputs",
+                        "Noob_Cheater",
+                        "GigVariant",
+                        "WithoutSkill",
+                        "JustForFun",
+                        "MagnusDoe",
+                        "AlottefSlide",
+                        "MantleESCape",
+                        "Foxwort",
+                        "Outtafuel",
+                        "OrionthreeTM",
+                        "Dancefun",
+                        "Goatspeare",
+                        "Fanoftastic",
+                        "Mikeowets_Grass",
+                        "FastElane_Only",
+                        "Hol_DeGeer",
+                        "GripeskeyTM",
+                        "Simon_Coeur",
+                        "refridgzerator",
+                        "Chlorophylis",
+                        "Brenoufzor",
+                        "Carlibou",
+                        "Moskito",
+                        "AidenDrill",
+                        "PersianPrince",
+                        "EzioOfTheRoofs",
+                        "RavenLaurie",
+                        "HannoTheDog",
+                        "StinkyFerretBoy",
+                        "DressUpQueen",
+                        "AlpacaSupremacy",
+                        "AxolotlRights",
+                        "StarStarSpace",
+                        "ChonkNoises",
+                        "ChickenBlock",
+                        "MayorLewis",
+                        "PamRacerBus",
+                        "SadCannibal",
+                        "RaccoonHands",
+                        "TPShortage",
+                        "ChatNoir",
+                        "ActualMothman",
+                        "BobBelcher",
+                        "Villaneve",
+                        "HappySnail",
+                        "SquishyBlue",
+                        "OGTomNook",
+                        "FuriousPikachu",
+                        "WendigoApocalypse",
+                        "IronmanDeficiency",
+                        "TrackmaniaFanfics",
+                        "EatMyShorts",
+                        "FinnTheHuman",
+                        "DeatheaterSquad",
+                        "LukesLostHand",
+                        "SmapiSmartmi",
+                        "ElectricTopsy",
+                        "MerlinsBeard",
+                        "Preciousssssss",
+                        "AlexaPlayDespacito",
+                        "ItsWednesdayMyDudes",
+                        "ROADWorkAhead",
+                        "FalafelLove",
+                        "NoTomatoNoOnion"
+                    ];
+    BotNameNumber = ML::Rand(0, FakePlayerNames.count-1); 
+    BotName = FakePlayerNames[BotNameNumber];
+    NumBots = 0;
+    declare Integer i = 0;
+    declare Integer j = 0;
+    declare Integer FakeUsersNbTwo;
+    if (_FakeUsersNb1+_FakeUsersNb2 > FakePlayerNames.count) {
+        FakeUsersNbTwo = FakePlayerNames.count-1;
+    } else {
+        FakeUsersNbTwo = _FakeUsersNb1+_FakeUsersNb2;
+    }
+    while (NumBots < FakeUsersNbTwo) {
+        yield;
+        while (i < _FakeUsersNb1) {
+            sleep(10);
+            log(""^FakePlayerNames);
+            NumBots+=1;
+            i+=1;
+            BotNameNumber = ML::Rand(0, FakePlayerNames.count-1);
+            BotName = FakePlayerNames[BotNameNumber];
+            Users_CreateFake(BotName, 1);
+            sleep(10);
+            FakePlayerNames.remove(BotName);
+        }
+        while (j < _FakeUsersNb2) {
+            sleep(10);
+            log(""^FakePlayerNames);
+            NumBots+=1;
+            j+=1;
+            BotNameNumber = ML::Rand(0, FakePlayerNames.count-1);
+            BotName = FakePlayerNames[BotNameNumber];
+            Users_CreateFake(BotName, 2);
+            sleep(10);
+            FakePlayerNames.remove(BotName);
+        }
+    }
+}

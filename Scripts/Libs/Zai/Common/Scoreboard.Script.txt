@@ -1,0 +1,206 @@
+// Simple scoreboard
+// Supported games:
+// TM2020
+
+#Include "Libs/Nadeo/ModeLibs/Legacy/Layers2.Script.txt" as Layers
+
+//declare netwrite Text FooterText for Teams[0];
+
+
+Void SetFooterText(Text _Value) {
+	declare netwrite FooterText for Teams[0] = "";
+	FooterText = _Value;
+}
+
+Text GetScoresManialink() {
+    return """
+    <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+    <manialink version="3" name="Scores">
+        <quad pos="0 0" z-index="-1" size="250 115" bgcolor="FFF" opacity="0.5" halign="center" valign="center" style="UICommon128_1" substyle="BgFrame1" modulatecolor="000000FF"/>
+        <framemodel id="PlayerCard">
+            <quad pos="100 0" z-index="1" size="110 10" bgcolor="FFF" opacity="0.2" style="UICommon128_1" substyle="BgFrame1" halign="right"/>
+            <quad pos="0 0" z-index="2" size="10 10" bgcolor="FFF" opacity="0.2"/>
+            <quad pos="-10 0" z-index="2" size="10 10" bgcolor="FFF" opacity="01" style="UICommon128_1" substyle="BgFrame1" alphamask="https://cdn.discordapp.com/attachments/666839789030473735/1020096962869080084/unknown.png"  image="https://cdn.discordapp.com/attachments/836649977962037278/1019739205972275200/Icon.tga" keepratio="Clip"/>
+            <label pos="5 -4.5" z-index="3" size="60 5" textsize="5.5" text="99" halign="center" valign="center" textfont="GameFontBlack" textprefix="$t"/>
+            <label pos="12.5 -4.5" z-index="3" size="60 5" text="[$O$N$S$0F0N$0FFC$z$>$t] zai-tm" halign="left" valign="center" textfont="GameFontBlack" textprefix="$t"/>
+            <label pos="97.5 -4.5" z-index="3" size="15 5" text="9999" textfont="GameFontSemiBold" valign="center" halign="right"/>
+            <label pos="87.5 -4.5" z-index="3" size="8.5 5" text="99" textfont="GameFontSemiBold" valign="center" halign="right"/>
+        </framemodel>
+
+        <frame pos="0 -5" id="Players">
+            <frameinstance modelid="PlayerCard" pos="-105 55"/>
+            <frameinstance modelid="PlayerCard" pos="-105 40"/>
+            <frameinstance modelid="PlayerCard" pos="-105 25"/>
+            <frameinstance modelid="PlayerCard" pos="-105 10"/>
+            <frameinstance modelid="PlayerCard" pos="-105 -5"/>
+            <frameinstance modelid="PlayerCard" pos="-105 -20"/>
+            <frameinstance modelid="PlayerCard" pos="15 55"/>
+            <frameinstance modelid="PlayerCard" pos="15 40"/>
+            <frameinstance modelid="PlayerCard" pos="15 25"/>
+            <frameinstance modelid="PlayerCard" pos="15 10"/>
+            <frameinstance modelid="PlayerCard" pos="15 -5"/>
+            <frameinstance modelid="PlayerCard" pos="15 -20"/>
+        </frame>
+        <label pos="0 -42.5" z-index="0" size="175 10" text="It looks like the script broke!" textfont="GameFontBlack" textsize="5" halign="center" valign="center2" textprefix="$t$i" id="ServerName"/>
+        <label pos="0 -50" z-index="0" size="100 5" text="I'm so sad :(" id="Footer" halign="center" valign="center" textfont="GameFontRegular"/> 
+
+        <frame id="PageControls" pos="0 -72.5" z-index="999">
+            <quad pos="0 0" z-index="1" size="75 20" bgcolor="FFF" opacity="0.5" halign="center" valign="center" style="UICommon128_1" substyle="BgFrame1" modulatecolor="000000FF"/>
+            <quad pos="27 0" z-index="2" size="15 15" bgcolor="FFF" opacity="1" halign="center" valign="center" style="UICommon64_1" substyle="ArrowRightSlim_light" id="PageControlRight" scriptevents="1"/>
+            <quad pos="-27 0" z-index="2" size="15 15" bgcolor="FFF" opacity="1" halign="center" valign="center" style="UICommon64_1" substyle="ArrowLeftSlim_light" id="PageControlLeft" scriptevents="1"/>
+            <label pos="0 0" z-index="2" size="30 15" text="1/1" textfont="GameFontBlack" halign="center" valign="center2" textsize="8" id="PageNumber"/>
+        </frame>
+        <script><!--
+        /** @context CSmMlScriptIngame */
+        #Include "TextLib" as TL
+        #Include "MathLib" as ML
+
+
+        #Struct K_PageControls {
+            CMlFrame Frame;
+            CMlQuad Left;
+            CMlQuad Right;
+            CMlLabel Index;
+        }
+
+        declare Integer Pages;
+        declare Integer PageIndex;
+        declare K_PageControls PageControls;
+
+        CSmPlayer GetPlayer(Text _Login) {
+            foreach (Player in Players) {
+                if (Player.User.Login == _Login) {
+                    return Player;
+                }
+            }
+            return Null;
+        }
+
+        Void Render() {
+            declare netread Text FooterText for Teams[0];
+            declare CMlFrame PlayersFrame <=> (Page.GetFirstChild("Players") as CMlFrame);
+            declare CMlFrame PageControlsFrame <=> (Page.GetFirstChild("PageControls") as CMlFrame);
+            declare CMlLabel ServerName <=> (Page.GetFirstChild("ServerName") as CMlLabel);
+            declare CMlLabel Footer <=> (Page.GetFirstChild("Footer") as CMlLabel);
+            Pages = (Scores.count/12)+1;
+            PageIndex = ML::Clamp(PageIndex, 0, Pages - 1);
+        
+            ServerName.Value = CurrentServerName;
+            Footer.Value = FooterText;
+        
+            foreach (i => Elem in PlayersFrame.Controls) {
+                declare CMlQuad PlayerBg = ((Elem as CMlFrame).Controls[0] as CMlQuad);
+                declare CMlQuad PlayerAvatar = ((Elem as CMlFrame).Controls[2] as CMlQuad);
+                declare CMlLabel PlayerRanking = ((Elem as CMlFrame).Controls[3] as CMlLabel);
+                declare CMlLabel PlayerName = ((Elem as CMlFrame).Controls[4] as CMlLabel);
+                declare CMlLabel PlayerPoints = ((Elem as CMlFrame).Controls[5] as CMlLabel);
+                declare CMlLabel PlayerRoundPoints = ((Elem as CMlFrame).Controls[6] as CMlLabel);
+                declare Integer PlayersNum = Scores.count;
+            
+                PlayerRanking.Value = "$t"^i+(12*PageIndex)+1;
+                PageControls.Frame.Visible = Pages >= 2;
+                PageControls.Left.Visible = PageIndex >= 1;
+                PageControls.Right.Visible = PageIndex < Pages-1;
+                PageControls.Index.Value = PageIndex+1^"/"^Pages;
+            
+                if (Scores.existskey(i+(12*PageIndex))) {
+                
+                    Elem.Show();
+                    if (Scores[i+(12*PageIndex)].User.ClubTag != "") {
+                        PlayerName.Value = "["^Scores[i+(12*PageIndex)].User.ClubTag^"$z$>$t] "^Scores[i+(12*PageIndex)].User.Name;
+                    } else {
+                        PlayerName.Value = ""^Scores[i+(12*PageIndex)].User.Name;
+                    }
+                
+                    PlayerPoints.Value = ""^Scores[i+(12*PageIndex)].Points;
+                    PlayerRoundPoints.TextPrefix = "$s$090+";
+                    PlayerRoundPoints.Value = ""^Scores[i+(12*PageIndex)].RoundPoints;
+                    PlayerBg.ModulateColor = Scores[i+(12*PageIndex)].User.Color;
+                    PlayerAvatar.ImageUrl = Scores[i+(12*PageIndex)].User.CountryFlagUrl;
+                    //log(Scores[i+(12*PageIndex)].User.ZonePath);
+                    if (Scores[i+(12*PageIndex)].User.ZonePath == "") {
+                        PlayerAvatar.ImageUrl = "https://cdn.discordapp.com/attachments/836649977962037278/1019739205972275200/Icon.tga";
+                    }
+                    if (Scores[i+(12*PageIndex)].RoundPoints == 0) {
+                        PlayerRoundPoints.Value = "";
+                        PlayerRoundPoints.TextPrefix = "";
+                    }
+                
+                    declare CSmPlayer ScorePlayer <=> GetPlayer(Scores[i+(12*PageIndex)].User.Login);
+                    declare Boolean PlayerIsDisconnectedOrSpectator = ScorePlayer == Null || ScorePlayer.RequestsSpectate;
+                    if (PlayerIsDisconnectedOrSpectator) {
+                        PlayerBg.ModulateColor = <0.,0.,0.>;
+                    }
+                } else {
+                    Elem.Hide();
+                    PlayerName.Value = "";
+                }
+            }
+        }
+
+
+        Void NextPage() {
+            PageIndex += 1;
+            Render();
+        }
+
+        Void PrevPage() {
+            PageIndex -= 1;
+            Render();
+        }
+
+
+        main() {
+            declare Text PrevLocalDateText;
+            declare CMlFrame PageControlsFrame <=> (Page.GetFirstChild("PageControls") as CMlFrame);
+            PageControls = K_PageControls {
+                Frame = PageControlsFrame,
+                Left = (PageControlsFrame.GetFirstChild("PageControlLeft") as CMlQuad),
+                Right = (PageControlsFrame.GetFirstChild("PageControlRight") as CMlQuad),
+                Index = (PageControlsFrame.GetFirstChild("PageNumber") as CMlLabel)
+            };
+        
+            while (True) {
+                yield;
+                if (!PageIsVisible) continue;
+            
+                foreach(Event in PendingEvents) {
+                    switch(Event.Type) {
+                        case CMlScriptEvent::Type::KeyPress: {
+                            switch(Event.KeyCode) {
+                                case 104: PrevPage(); // Page up key
+                                case 79: NextPage();	// Page down key
+                            }
+                        }
+                        case CMlScriptEvent::Type::MouseClick: {
+                            switch(Event.ControlId) {
+                                case "PageControlLeft": {
+                                    PrevPage();
+                                }
+                                case "PageControlRight": {
+                                    NextPage();
+                                }
+                            }
+                        }
+                    }
+                }
+            
+                // update every 1 second to save resources
+                if (System.CurrentLocalDateText != PrevLocalDateText) {
+                    PrevLocalDateText = System.CurrentLocalDateText;
+                    Render();
+                }
+            }
+        }
+
+
+        --></script>
+    </manialink>
+    """;
+}
+
+Void Load() {
+    Layers::Create("Scores", GetScoresManialink());
+    Layers::SetType("Scores", CUILayer::EUILayerType::ScoresTable);
+    //Layers::SetAnimationType("Scores", CUILayer::EUILayerAnimation::ScaleFast);
+}
